@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Repositories\**" />
+    <Compile Remove="Services\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Repositories\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Configurations\DependencyInjection.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Delivery.Applications\Delivery.Applications.csproj" />
+    <ProjectReference Include="..\DeliveryDomain\Delivery.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

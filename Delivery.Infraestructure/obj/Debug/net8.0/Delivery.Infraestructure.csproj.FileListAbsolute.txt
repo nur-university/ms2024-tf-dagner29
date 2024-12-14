@@ -1,0 +1,5 @@
+D:\PROYECTOS\Diplomado microservicio\Delivery\Delivery\Delivery.Infraestructure\obj\Debug\net8.0\Delivery.Infraestructure.csproj.AssemblyReference.cache
+D:\PROYECTOS\Diplomado microservicio\Delivery\Delivery\Delivery.Infraestructure\obj\Debug\net8.0\Delivery.Infraestructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\PROYECTOS\Diplomado microservicio\Delivery\Delivery\Delivery.Infraestructure\obj\Debug\net8.0\Delivery.Infraestructure.AssemblyInfoInputs.cache
+D:\PROYECTOS\Diplomado microservicio\Delivery\Delivery\Delivery.Infraestructure\obj\Debug\net8.0\Delivery.Infraestructure.AssemblyInfo.cs
+D:\PROYECTOS\Diplomado microservicio\Delivery\Delivery\Delivery.Infraestructure\obj\Debug\net8.0\Delivery.Infraestructure.csproj.CoreCompileInputs.cache

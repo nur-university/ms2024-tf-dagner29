@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Deliverys\**" />
+    <Compile Remove="Shared\**" />
+    <Compile Remove="Transaccion\**" />
+    <EmbeddedResource Remove="Deliverys\**" />
+    <EmbeddedResource Remove="Shared\**" />
+    <EmbeddedResource Remove="Transaccion\**" />
+    <None Remove="Deliverys\**" />
+    <None Remove="Shared\**" />
+    <None Remove="Transaccion\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Abstractions\DomainEvents.cs" />
+    <Compile Remove="Abstractions\RouteDeterminedEvent.cs" />
+    <Compile Remove="Deliveries\DeliveryContext .cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>
