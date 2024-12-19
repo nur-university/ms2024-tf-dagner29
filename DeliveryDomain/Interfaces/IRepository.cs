@@ -8,9 +8,15 @@ namespace Delivery.Domain.Interfaces
 {
     public interface IRepository<T>
     {
-        T GetById(Guid id);
-        void Add(T entity);
-        void Update(T entity);
-        void Remove(Guid id);
+        
+        Task<T> GetByIdAsync(Guid id);
+        Task<List<T>> GetAllAsync();
+        Task CreateAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(Guid id);
+        //Task<IEnumerable<T>> GetAllAsync();
+        //Task AddAsync(T entity);
+        //Task UpdateAsync(T entity);
+        //Task DeleteAsync(Guid id);
     }
 }

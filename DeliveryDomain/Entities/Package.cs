@@ -9,15 +9,23 @@ namespace Delivery.Domain.Entities
 {
     public class Package
     {
-        public Guid Id { get; private set; }
-        public float Weight { get; private set; }
-        public Address Address { get; private set; }
+        public Guid Id { get;  set; }
+        public float Weight { get;  set; }
+        public Address Address { get;  set; }
 
+        // Relación con Delivery
+        public Guid? DeliveryId { get; set; }
+        public Deliveryx Delivery { get; private set; }
         public Package(Guid id, float weight, Address address)
         {
             Id = id;
             Weight = weight;
             Address = address;
+        }
+        public void AssignToDelivery(Deliveryx delivery)
+        {
+            Delivery = delivery ?? throw new ArgumentNullException(nameof(delivery));
+            DeliveryId = delivery.Id;
         }
     }
 }

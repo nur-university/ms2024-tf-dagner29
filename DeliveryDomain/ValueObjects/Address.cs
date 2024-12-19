@@ -20,5 +20,9 @@ namespace Delivery.Domain.ValueObjects
             Latitude = latitude;
             Longitude = longitude;
         }
+        public override string ToString()
+        {
+            return $"{Street}, {City}";
+        }
     }
 }

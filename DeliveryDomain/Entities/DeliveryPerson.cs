@@ -10,18 +10,39 @@ namespace Delivery.Domain.Entities
     {
         public Guid Id { get; private set; }
         public string Name { get; private set; }
-        public List<Deliveryx> ActiveDeliveries { get; private set; }
+        public string Email { get; private set; }
+
+        public List<Deliveryx> AssignedDeliveries { get; private set; }
+
+        // Constructor requerido por EF Core
+        private DeliveryPerson()
+        {
+            AssignedDeliveries = new List<Deliveryx>();
+        }
+
+
 
         public DeliveryPerson(Guid id, string name)
         {
             Id = id;
             Name = name;
-            ActiveDeliveries = new List<Deliveryx>();
+            AssignedDeliveries = new List<Deliveryx>();
         }
 
         public void AssignDelivery(Deliveryx delivery)
         {
-            ActiveDeliveries.Add(delivery);
+            if (delivery == null)
+                throw new ArgumentNullException(nameof(delivery));
+            AssignedDeliveries.Add(delivery);
         }
+        // Método para eliminar una entrega
+        public void RemoveDelivery(Deliveryx delivery)
+        {
+            if (delivery == null)
+                throw new ArgumentNullException(nameof(delivery));
+
+            AssignedDeliveries.Remove(delivery);
+        }
+
     }
 }
