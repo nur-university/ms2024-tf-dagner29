@@ -1,5 +1,4 @@
-﻿//using Delivery.Domain.Abstractions;
-//using Delivery.Domain.Deliveries;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,22 +7,18 @@ using System.Threading.Tasks;
 using Delivery.Domain.Entities;
 using Delivery.Domain.ValueObjects;
 using Delivery.Domain.Interfaces;
+using MediatR;
+using Delivery.Applications.Models;
 
 namespace Delivery.Applications.UsesCases.Deliveries
 {
-    public class CreateDeliveryCommand
+    public class CreateDeliveryCommand : IRequest<Guid>
     {
-        private readonly IRepository<Deliveryx> _deliveryRepository;
 
-        public CreateDeliveryCommand(IRepository<Deliveryx> deliveryRepository)
-        {
-            _deliveryRepository = deliveryRepository;
-        }
+        public string Status { get; set; }
+        public DeliveryRoute Route { get; set; }
+        public List<Guid> PackageIds { get; set; }
 
-        public void Execute(Guid id, string status, DeliveryRoute route)
-        {
-            var delivery = new Deliveryx(id, status, route);
-            _deliveryRepository.Add(delivery);
-        }
+         
     }
 }

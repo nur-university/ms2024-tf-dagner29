@@ -7,30 +7,21 @@ using System.Threading.Tasks;
 using Delivery.Domain.Entities;
 //using Delivery.Domain.ValueObjects;
 using Delivery.Domain.Interfaces;
+using Delivery.Applications.Models;
+using MediatR;
 
 namespace Delivery.Applications.UsesCases.Packages
 {
-    public class AddPackageToDeliveryCommand
+    public class AddPackageToDeliveryCommand : IRequest
     {
-        private readonly IRepository<Deliveryx> _deliveryRepository;
-        private readonly IRepository<Package> _packageRepository;
 
-        public AddPackageToDeliveryCommand(IRepository<Deliveryx> deliveryRepository, IRepository<Package> packageRepository)
+        public Guid DeliveryId { get; set; }
+        public Guid PackageId { get; set; }
+        public AddPackageToDeliveryCommand(Guid deliveryId, Guid packageId)
         {
-            _deliveryRepository = deliveryRepository;
-            _packageRepository = packageRepository;
+            DeliveryId = deliveryId;
+            PackageId = packageId;
         }
 
-        public void Execute(Guid deliveryId, Package package)
-        {
-            var delivery = _deliveryRepository.GetById(deliveryId);
-
-            if (delivery != null)
-            {
-                delivery.AddPackage(package);
-                _deliveryRepository.Update(delivery);
-                _packageRepository.Add(package);
-            }
-        }
     }
 }

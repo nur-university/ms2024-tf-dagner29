@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-//using Delivery.Domain.Entities;
+using Delivery.Applications.UsesCases.Interfaces;
 using Delivery.Domain.Entities;
 using Delivery.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Delivery.Infraestructure.Persistence.Repositories
 {
-    public class PackageRepository : IRepository<Package>
+        public class PackageRepository : IPackageRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -18,31 +19,39 @@ namespace Delivery.Infraestructure.Persistence.Repositories
             _context = context;
         }
 
-        public void Add(Package entity)
+        public async Task<Package> GetByIdAsync(Guid id)
         {
-            _context.Packages.Add(entity);
-            _context.SaveChanges();
+            return await _context.Packages.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public Package GetById(Guid id)
+        public async Task<List<Package>> GetAllAsync()
         {
-            return _context.Packages.FirstOrDefault(p => p.Id == id);
+            return await _context.Packages.ToListAsync();
         }
 
-        public void Remove(Guid id)
+        public async Task CreateAsync(Package package)
         {
-            var package = GetById(id);
+            await _context.Packages.AddAsync(package);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Package>> GetPackagesByDeliveryIdAsync(Guid deliveryId)
+        {
+            return await _context.Packages
+                .Where(p => EF.Property<Guid?>(p, "DeliveryId") == deliveryId)
+                .ToListAsync();
+        }
+
+        public async Task AssignToDeliveryAsync(Guid packageId, Guid deliveryId)
+        {
+            var package = await GetByIdAsync(packageId);
             if (package != null)
             {
-                _context.Packages.Remove(package);
-                _context.SaveChanges();
+                _context.Entry(package).Property("DeliveryId").CurrentValue = deliveryId;
+                await _context.SaveChangesAsync();
             }
         }
-
-        public void Update(Package entity)
-        {
-            _context.Packages.Update(entity);
-            _context.SaveChanges();
-        }
     }
+
+
 }

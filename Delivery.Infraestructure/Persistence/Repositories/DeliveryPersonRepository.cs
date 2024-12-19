@@ -4,43 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
- using Delivery.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Delivery.Applications.UsesCases.Interfaces;
+ 
 namespace Delivery.Infraestructure.Persistence.Repositories
 {
-    public class DeliveryPersonRepository : IRepository<DeliveryPerson>
+
+    public class DeliveryPersonRepository : IDeliveryPersonRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _dbContext;
 
-        public DeliveryPersonRepository(ApplicationDbContext context)
+        public DeliveryPersonRepository(ApplicationDbContext dbContext)
         {
-            _context = context;
+            _dbContext = dbContext;
         }
 
-        public void Add(DeliveryPerson entity)
+        public async Task<DeliveryPerson> GetByIdAsync(Guid id)
         {
-            _context.DeliveryPersons.Add(entity);
-            _context.SaveChanges();
+            return await _dbContext.DeliveryPersons
+                .Include(dp => dp.AssignedDeliveries)
+                .FirstOrDefaultAsync(dp => dp.Id == id);
         }
 
-        public DeliveryPerson GetById(Guid id)
-        {
-            return _context.DeliveryPersons.FirstOrDefault(dp => dp.Id == id);
-        }
-
-        public void Remove(Guid id)
-        {
-            var person = GetById(id);
-            if (person != null)
-            {
-                _context.DeliveryPersons.Remove(person);
-                _context.SaveChanges();
-            }
-        }
-
-        public void Update(DeliveryPerson entity)
-        {
-            _context.DeliveryPersons.Update(entity);
-            _context.SaveChanges();
-        }
-    }
+     }
+    
 }

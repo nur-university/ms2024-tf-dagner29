@@ -7,26 +7,16 @@ using System.Threading.Tasks;
 //using Delivery.Domain./*Deliveries*/;
 using Delivery.Domain.Entities;
 using Delivery.Domain.Interfaces;
+using MediatR;
 
 namespace Delivery.Applications.UsesCases.Deliveries
 {
-    public class UpdateDeliveryStatusCommand
+
+    public class UpdateDeliveryStatusCommand : IRequest
     {
-        private readonly IRepository<Deliveryx> _deliveryRepository;
-
-        public UpdateDeliveryStatusCommand(IRepository<Deliveryx> deliveryRepository)
-        {
-            _deliveryRepository = deliveryRepository;
-        }
-
-        public void Execute(Guid id, string newStatus)
-        {
-            var delivery = _deliveryRepository.GetById(id);
-            delivery?.UpdateStatus(newStatus);
-            if (delivery != null)
-            {
-                _deliveryRepository.Update(delivery);
-            }
-        }
+        public Guid DeliveryId { get; set; }
+        public string Status { get; set; }
     }
+
+
 }

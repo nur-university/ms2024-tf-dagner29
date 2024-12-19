@@ -8,14 +8,28 @@
 
   <ItemGroup>
     <Compile Remove="Abstractions\**" />
+    <Compile Remove="Command\**" />
+    <Compile Remove="Deliveries\**" />
     <Compile Remove="Dpto\**" />
     <Compile Remove="Handler\**" />
+    <Compile Remove="Queries\**" />
     <EmbeddedResource Remove="Abstractions\**" />
+    <EmbeddedResource Remove="Command\**" />
+    <EmbeddedResource Remove="Deliveries\**" />
     <EmbeddedResource Remove="Dpto\**" />
     <EmbeddedResource Remove="Handler\**" />
+    <EmbeddedResource Remove="Queries\**" />
     <None Remove="Abstractions\**" />
+    <None Remove="Command\**" />
+    <None Remove="Deliveries\**" />
     <None Remove="Dpto\**" />
     <None Remove="Handler\**" />
+    <None Remove="Queries\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Handlers\Packages\AddPackageToDeliveryHandler.cs" />
+    <Compile Remove="UsesCases\Deliveries\GetDeliveryQuery.cs" />
   </ItemGroup>
 
   <ItemGroup>

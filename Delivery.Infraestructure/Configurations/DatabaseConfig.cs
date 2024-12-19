@@ -13,11 +13,22 @@ namespace Delivery.Infraestructure.Configurations
 {
     public static class DatabaseConfig
     {
-        public static void ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
+
+        public static IServiceCollection AddDatabaseInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+            return services;
         }
+
+
+        //public static void ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    var connectionString = configuration.GetConnectionString("DefaultConnection");
+        //    services.AddDbContext<ApplicationDbContext>(options =>
+        //        options.UseSqlServer(connectionString));
+
+        // }
     }
 }

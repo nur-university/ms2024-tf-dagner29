@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Delivery.Applications.Models;
 using Delivery.Domain.Entities;
 using Delivery.Domain.Interfaces;
+using Delivery.Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
+using Delivery.Applications.UsesCases.Interfaces;
+
+
 namespace Delivery.Infraestructure.Persistence.Repositories
 {
-    public class DeliveryRepository : IRepository<Deliveryx>
+
+    public class DeliveryRepository : IDeliveryRepository
     {
         private readonly ApplicationDbContext _context;
 
@@ -16,31 +23,75 @@ namespace Delivery.Infraestructure.Persistence.Repositories
             _context = context;
         }
 
-        public void Add(Deliveryx entity)
+        public async Task<Guid> CreateDeliveryAsync(Deliveryx delivery)
         {
-            _context.Deliveries.Add(entity);
-            _context.SaveChanges();
+            await _context.Deliveries.AddAsync(delivery);
+            await _context.SaveChangesAsync();
+            return delivery.Id;
         }
 
-        public Deliveryx GetById(Guid id)
+        public async Task<Deliveryx> GetDeliveryByIdAsync(Guid id)
         {
-            return _context.Deliveries.FirstOrDefault(d => d.Id == id);
+            return await _context.Deliveries
+                .Include(d => d.Packages)
+                .Include(d => d.AssignedPerson)
+                .FirstOrDefaultAsync(d => d.Id == id);
         }
 
-        public void Remove(Guid id)
+        public async Task<List<Deliveryx>> GetAllDeliveriesAsync()
         {
-            var delivery = GetById(id);
+            return await _context.Deliveries
+                .Include(d => d.Packages)
+                .Include(d => d.AssignedPerson)
+                .ToListAsync();
+        }
+
+        public async Task UpdateDeliveryStatusAsync(Guid id, string status)
+        {
+            var delivery = await _context.Deliveries.FindAsync(id);
             if (delivery != null)
             {
-                _context.Deliveries.Remove(delivery);
-                _context.SaveChanges();
+
+                string status1 = status;
+                delivery.Status = status;
+                _context.Deliveries.Update(delivery);
+                await _context.SaveChangesAsync();
             }
         }
 
-        public void Update(Deliveryx entity)
+        public async Task AssignDeliveryToPersonAsync(Guid deliveryId, Guid personId)
         {
-            _context.Deliveries.Update(entity);
-            _context.SaveChanges();
+            var delivery = await _context.Deliveries.FindAsync(deliveryId);
+            var person = await _context.DeliveryPersons.FindAsync(personId);
+            if (delivery != null && person != null)
+            {
+                delivery.AssignedPerson = person;
+                _context.Deliveries.Update(delivery);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task AddPackageToDeliveryAsync(Guid deliveryId, Guid packageId)
+        {
+            var delivery = await _context.Deliveries.FindAsync(deliveryId);
+            var package = await _context.Packages.FindAsync(packageId);
+            if (delivery != null && package != null)
+            {
+                delivery.Packages.Add(package);
+                package.DeliveryId = deliveryId;
+                _context.Packages.Update(package);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<List<Package>> GetPackagesByDeliveryIdAsync(Guid deliveryId)
+        {
+            return await _context.Packages
+                .Where(p => p.DeliveryId == deliveryId)
+                .ToListAsync();
         }
     }
+
+
+
 }
