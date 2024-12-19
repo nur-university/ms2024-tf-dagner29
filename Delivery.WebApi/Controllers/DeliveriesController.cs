@@ -1,47 +1,99 @@
 ﻿using Delivery.WebApi.DPTOs;
 using Microsoft.AspNetCore.Mvc;
-
-
-using Delivery.Applications.UsesCases.Deliveries;
+using MediatR;
+ using Delivery.Applications.UsesCases.Deliveries;
+using Delivery.Domain.ValueObjects;
+using Delivery.Applications.UsesCases.Packages;
+using System.Net;
  
-
 namespace Delivery.WebApi.Controllers
 {
+
+    [ApiController]
+    [Route("api/[controller]")]
     public class DeliveriesController : ControllerBase
     {
-        private readonly CreateDeliveryCommand _createDeliveryCommand;
-        private readonly UpdateDeliveryStatusCommand _updateDeliveryStatusCommand;
-        private readonly AssignDeliveryToPersonCommand _assignDeliveryToPersonCommand;
+        private readonly IMediator _mediator;
 
-        public DeliveriesController(
-            CreateDeliveryCommand createDeliveryCommand,
-            UpdateDeliveryStatusCommand updateDeliveryStatusCommand,
-            AssignDeliveryToPersonCommand assignDeliveryToPersonCommand)
+        public DeliveriesController(IMediator mediator)
         {
-            _createDeliveryCommand = createDeliveryCommand;
-            _updateDeliveryStatusCommand = updateDeliveryStatusCommand;
-            _assignDeliveryToPersonCommand = assignDeliveryToPersonCommand;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public IActionResult CreateDelivery(CreateDeliveryRequestDto request)
+        public async Task<IActionResult> CreateDelivery([FromBody] CreateDeliveryRequestDto requestDto)
         {
-            var deliveryId = _createDeliveryCommand.Execute(request);
-            return CreatedAtAction(nameof(GetDeliveryById), new { id = deliveryId }, deliveryId);
+            var command = new CreateDeliveryCommand
+            {
+                Status = requestDto.Status,
+                //Route = requestDto.Route,
+                PackageIds = requestDto.PackageIds
+            };
+
+            var result = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetById), new { id = result }, result);
+        }
+        //public async Task<IActionResult> Create([FromBody] CreateDeliveryCommand command)
+        //{
+        //    var deliveryId = await _mediator.Send(command);
+        //    return CreatedAtAction(nameof(GetById), new { id = deliveryId }, deliveryId);
+        //}
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var query = new GetDeliveryQuery { DeliveryId = id };
+            var delivery = await _mediator.Send(query);
+            return Ok(delivery);
         }
 
-        [HttpPatch("{id}/status")]
-        public IActionResult UpdateStatus(Guid id, [FromBody] string status)
+        //[HttpPost("{id}/packages")]
+        //public async Task<IActionResult> AddPackage(Guid id, [FromBody] AddPackageRequestDto packageDto)
+        //{
+        //    var command = new AddPackageToDeliveryCommand(id, packageDto.PackageId);
+        //    await _mediator.Send(command);
+        //    return NoContent();
+        //}
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id)
         {
-            _updateDeliveryStatusCommand.Execute(id, status);
+            var query = new GetDeliveryByIdQuery { Id = id };
+            var result = await _mediator.Send(query);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateDeliveryStatusRequestDto requestDto)
+        {
+            var command = new UpdateDeliveryStatusCommand
+            {
+                DeliveryId = id,
+                Status = requestDto.Status
+            };
+
+            await _mediator.Send(command);
             return NoContent();
         }
 
-        [HttpPatch("{id}/assign-person")]
-        public IActionResult AssignToPerson(Guid id, [FromBody] Guid personId)
+        [HttpPost("{id:guid}/assign")]
+        public async Task<IActionResult> AssignDelivery(Guid id, [FromBody] AssignDeliveryRequestDto requestDto)
         {
-            _assignDeliveryToPersonCommand.Execute(id, personId);
+            var command = new AssignDeliveryToPersonCommand
+            {
+                DeliveryId = id,
+                PersonId = requestDto.DeliveryPersonId
+            };
+
+            await _mediator.Send(command);
             return NoContent();
         }
+
     }
+
+
 }

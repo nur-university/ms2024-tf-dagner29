@@ -1,7 +1,44 @@
+
+using Delivery.Infraestructure.Persistence.Repositories;
+using Delivery.Applications.UsesCases.Interfaces;
+using Delivery.Infraestructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Delivery.Applications.UsesCases.Deliveries;
+using Microsoft.Extensions.DependencyInjection;
+using Delivery.Applications.Handlers.Deliveries;
+
+
+//using Delivery.Infraestructure.Persistence;
+using MediatR;
+//using Microsoft.EntityFrameworkCore;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorPages();
+// Configuración del DbContext
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//// Repositorios
+//builder.Services.AddScoped<IDeliveryRepository, DeliveryRepository>();
+//// MediatR y otros servicios
+//builder.Services.AddMediatR(typeof(CreateDeliveryCommand).Assembly);
+
+
+//// Add services to the container.
+//builder.Services.AddRazorPages();
+
+
+// Agregar servicios
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddMediatR(typeof(CreateDeliveryHandler).Assembly);
+builder.Services.AddScoped<IDeliveryRepository, DeliveryRepository>();
+
 
 var app = builder.Build();
 
